@@ -34,7 +34,7 @@ import urllib.request
 import pandas
 import yfinance
 
-VERSION = 20221209.02
+VERSION = 20221222.01
 
 cwd = os.path.dirname(os.path.realpath(__file__))
 tiers = ['tier_n3', 'tier_n2', 'tier_n1', 'tier_00', 'tier_p1', 'tier_p2', 'tier_p3']
@@ -516,8 +516,8 @@ def generate_ranges_incremental(i):
 
     return ranges
 
-async def run_va_analysis(output_dir, trial, data, multipliers, ranges=None):
-    '''Run by-range value-averaging analysis from input data'''
+async def run_smart_dca_analysis(output_dir, trial, data, multipliers, ranges=None):
+    '''Run by-range smart dca analysis from input data'''
 
     if not multipliers:
         multipliers = gen_multipliers()
@@ -653,13 +653,13 @@ def main():
             max_trials = 10000
 
         while trial <= max_trials:
-            asyncio.run(run_va_analysis(output_dir, trial, data, mult_ls))
+            asyncio.run(run_smart_dca_analysis(output_dir, trial, data, mult_ls))
             trial += 1
     else:
         i = 0
         while i <= 10:
             ranges = generate_ranges_incremental(i)
-            asyncio.run(run_va_analysis(output_dir, trial, data, mult_ls, ranges=ranges))
+            asyncio.run(run_smart_dca_analysis(output_dir, trial, data, mult_ls, ranges=ranges))
             i += 0.5
             trial += 1
     analysis_end = time.monotonic()
