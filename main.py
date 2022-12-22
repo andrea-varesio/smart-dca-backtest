@@ -1,6 +1,6 @@
 #!/bin/python3
 
-'''
+"""
 "Smart DCA backtest" - Smart Dollar Cost Averaging backtest
 Copyright (C) 2022 Andrea Varesio <https://www.andreavaresio.com/>
 Source Code: <https://github.com/andrea-varesio/smart-dca-backtest>
@@ -17,7 +17,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
-'''
+"""
 
 import argparse
 import asyncio
@@ -34,7 +34,7 @@ import urllib.request
 import pandas
 import yfinance
 
-VERSION = 20221222.01
+VERSION = 20221222.02
 
 cwd = os.path.dirname(os.path.realpath(__file__))
 tiers = ['tier_n3', 'tier_n2', 'tier_n1', 'tier_00', 'tier_p1', 'tier_p2', 'tier_p3']
@@ -44,7 +44,9 @@ header = [
 ]
 
 def parse_arguments():
-    '''Parse arguments'''
+    """
+    Parse arguments
+    """
 
     copy = 'Smart DCA backtest - Copyright (C) 2022 Andrea Varesio <https://www.andreavaresio.com/>'
     arg = argparse.ArgumentParser(description=copy)
@@ -89,7 +91,9 @@ def parse_arguments():
     return arg.parse_args()
 
 def show_license():
-    '''Show License'''
+    """
+    Print license
+    """
 
     print('*' * 86)
     print('"Smart DCA backtest" - Smart Dollar Cost Averaging backtest')
@@ -101,14 +105,18 @@ def show_license():
     print('*' * 86)
 
 def show_disclaimer():
-    '''Show Disclaimer'''
+    """
+    Print disclaimer
+    """
 
     print('DISCLAIMER:')
     print(f"{pathlib.Path(os.path.join(cwd, 'DISCLAIMER')).read_text(encoding='utf-8')}")
     print('*' * 100)
 
 def run_update():
-    '''Check for new versions and prompt to update'''
+    """
+    Check for new online versions, prompt to update, and verify hash before proceeding
+    """
 
     baseurl = 'https://raw.githubusercontent.com/andrea-varesio/smart-dca-backtest/main/'
 
@@ -146,7 +154,9 @@ def run_update():
         print('Update complete')
 
 def run_checks():
-    '''Run required checks'''
+    """
+    Run required checks for correct program functionality
+    """
 
     args = parse_arguments()
     status = 0
@@ -171,7 +181,13 @@ def run_checks():
         sys.exit(0)
 
 def get_output_dir(asset):
-    '''Get output directory'''
+    """
+    Define output directory
+
+    Parameters
+    ----------
+    str asset: Asset to analyze
+    """
 
     args = parse_arguments()
 
@@ -195,7 +211,14 @@ def get_output_dir(asset):
     raise FileNotFoundError('Invalid output path!')
 
 def get_trial_path(output_dir, trial):
-    '''Return trial path'''
+    """
+    Return trial path
+
+    Parameters
+    ----------
+    str output_dir: Output directory
+    int trial: Trial number
+    """
 
     if trial == 0:
         return os.path.join(output_dir, 'dca.csv')
@@ -203,7 +226,9 @@ def get_trial_path(output_dir, trial):
     return os.path.join(output_dir, 'trials', f'trial_{trial}.csv')
 
 def get_asset():
-    '''Get asset to analyze'''
+    """
+    Define asset to analyze
+    """
 
     args = parse_arguments()
 
@@ -231,7 +256,9 @@ def get_asset():
     return asset
 
 def get_period():
-    '''Get time period to analyze'''
+    """
+    Define time period to analyze
+    """
 
     args = parse_arguments()
 
@@ -241,7 +268,14 @@ def get_period():
     return int(datetime.datetime.now().strftime('%Y')) - args.period
 
 def get_data(asset, output_dir):
-    '''Get historical data and save it to historical.csv, return start_date and data'''
+    """
+    Get historical data and save it to historical.csv, return start_date and data
+
+    Parameters
+    ----------
+    str asset: Asset to analyze
+    str output_dir: Output directory
+    """
 
     date = datetime.datetime.now().strftime('%Y-%m-%d')
     hist_raw = os.path.join(output_dir, 'historical_raw.csv')
@@ -276,7 +310,9 @@ def get_data(asset, output_dir):
     return start_date, pandas.read_csv(hist)
 
 def gen_multipliers():
-    '''Generate list of multipliers'''
+    """
+    Generate list of multipliers
+    """
 
     args = parse_arguments()
 
@@ -319,7 +355,15 @@ def gen_multipliers():
     return dict(zip(tiers, [maxm, 1+(incr*2), 1+incr, 1, 1-incr, 1-(incr*2), minm]))
 
 def get_multiplier(delta, multipliers, ranges):
-    '''Get multiplier from avg_nav'''
+    """
+    Define multiplier for single investment
+
+    Parameters
+    ----------
+    float delta: Percentage of difference between close price and average price paid
+    dict multipliers: List of defined multipliers
+    dict ranges: Trial ranges
+    """
 
     if delta < ranges['tier_n3'][1]:
         multiplier = multipliers['tier_n3']
@@ -339,7 +383,13 @@ def get_multiplier(delta, multipliers, ranges):
     return multiplier
 
 def get_drawdown(trial_path):
-    '''Calculate monthly drawdowns and return max drawdown'''
+    """
+    Calculate monthly drawdowns and return max drawdown
+
+    Parameters
+    ----------
+    str trial_path: Trial path
+    """
 
     msr = pandas.read_csv(trial_path)['Value'].pct_change()
     wealth_index = 1000 * (1 + msr).cumprod()
@@ -386,7 +436,14 @@ def get_drawdown(trial_path):
     return max_dd, ttr
 
 def get_trial_data(output_dir, trial):
-    '''Get last value, all-time-high drawdown, max drawdown, and time to recovery'''
+    """
+    Get last value, all-time-high drawdown, max drawdown, and time to recovery
+
+    Parameters
+    ----------
+    str output_dir: Output directory
+    int trial: Trial number
+    """
 
     trial_path = get_trial_path(output_dir, trial)
 
@@ -416,7 +473,17 @@ def get_trial_data(output_dir, trial):
     return last_value, ath_drawdown, max_drawdown, ttr
 
 def mapper(output_dir, trial, inv_total, ranges, mp_ls):
-    '''Append results to mapper'''
+    """
+    Append results to mapper file
+
+    Parameters
+    ----------
+    str output_dir: Output directory
+    int trial: Trial number
+    float inv_total: Total invested amount
+    dict ranges: Trial ranges
+    dict mp_ls: List of defined multipliers
+    """
 
     mapper_path = os.path.join(output_dir, 'mapper.csv')
 
@@ -435,7 +502,14 @@ def mapper(output_dir, trial, inv_total, ranges, mp_ls):
         map_file.writerow([trial, last_value, inv_total, gain, ath_dd, max_dd, ttr, ranges, mp_ls])
 
 def run_dca_analysis(output_dir, data):
-    '''Run DCA analysis from input data'''
+    """
+    Run DCA analysis from input data
+
+    Parameters
+    ----------
+    str output_dir: Output directory
+    pandas.DataFrame data: Historical data for selected asset
+    """
 
     shares, inv_total, avg_nav = 0, 0, 0
 
@@ -455,7 +529,9 @@ def run_dca_analysis(output_dir, data):
     mapper(output_dir, 0, inv_total, 0, 0)
 
 def generate_ranges_random():
-    '''Generate random ranges'''
+    """
+    Generate random ranges
+    """
 
     args = parse_arguments()
 
@@ -491,7 +567,13 @@ def generate_ranges_random():
     return ranges
 
 def generate_ranges_incremental(i):
-    '''Generate incremental ranges'''
+    """
+    Generate incremental ranges
+
+    Parameters
+    ----------
+    float i: increment
+    """
 
     ranges = {}
 
@@ -517,7 +599,17 @@ def generate_ranges_incremental(i):
     return ranges
 
 async def run_smart_dca_analysis(output_dir, trial, data, multipliers, ranges=None):
-    '''Run by-range smart dca analysis from input data'''
+    """
+    Run by-range smart dca analysis from input data
+
+    Parameters
+    ----------
+    str output_dir: Output directory
+    int trial: Trian number
+    pandas.DataFrame data: Historical data for selected asset
+    dict multipliers: List of defined multipliers
+    dict ranges: Trial ranges
+    """
 
     if not multipliers:
         multipliers = gen_multipliers()
@@ -550,7 +642,17 @@ async def run_smart_dca_analysis(output_dir, trial, data, multipliers, ranges=No
     mapper(output_dir, trial, inv_total, ranges, multipliers)
 
 def print_res(str_1, str_2, str_3, str_4='', mes=''):
-    '''Print results in table format'''
+    """
+    Print results in table format
+
+    Parameters
+    ----------
+    str str_1: String 1
+    str str_2: String 2
+    str str_3: String 3
+    str str_4: String 4
+    str mes: Unit of measurement
+    """
 
     def space_1(string):
         return ' ' * (25 - len(str(string)))
@@ -567,7 +669,13 @@ def print_res(str_1, str_2, str_3, str_4='', mes=''):
         print(str_1, space_1(str_1), str_2, mes, space_2(str_2), str_3, str_4, mes)
 
 def get_results(output_dir):
-    '''Process, save, and show best results'''
+    """
+    Process, save, and show best results
+
+    Parameters
+    ----------
+    str output_dir: Output directory
+    """
 
     best_value = best_gain = best_ath_dd = best_max_dd = best_ttr = None
 
@@ -617,7 +725,9 @@ def get_results(output_dir):
     print_res('Time to recovery', int(dca[6]), ttr_line[0], best_ttr, 'months')
 
 def main():
-    '''Main function'''
+    """
+    Main function
+    """
 
     args = parse_arguments()
 
