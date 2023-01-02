@@ -55,7 +55,7 @@ The program offers the ability to generate a random set of multiplier for each t
 You can specify the maximum (`-M`, `--max-mult`) and minimum (`-m`, `--min-mult`) multipliers. You can also decide whether or not these boundries are used as limits or actual multipliers, with `-fM`, `--force-max`, and `-fm`, `--force-min`.
 
 ## Ranges
-The default behavior of this program is to generate an array of 7 tiers with a random range (which falls between -15% and 15%) each, with the `n` (negative) tiers being the ones that have a range assigned that is less than the average investment price. 
+The default behavior of this program is to generate an array of 7 tiers with a random range (which falls between -15% and 15%) each, with the `n` (negative) tiers being the ones that have a range assigned that is less than the average investment price.
 
 However, given that the ranges are randomly generated, it may occur that some are greater than zero, despite the tier. To force the use of negative ranges in negative tiers, you can pass the `-fn` or `--force-neg` parameter.
 
@@ -116,7 +116,7 @@ GNU GENERAL PUBLIC LICENSE
 Version 3, 29 June 2007
 
 "Smart DCA backtest" - Smart Dollar Cost Averaging backtest<br />
-Copyright (C) 2022 Andrea Varesio <https://www.andreavaresio.com/>.
+Copyright (c) 2023 Andrea Varesio <https://www.andreavaresio.com/>.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
