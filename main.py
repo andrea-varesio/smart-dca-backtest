@@ -2,7 +2,7 @@
 
 """
 "Smart DCA backtest" - Smart Dollar Cost Averaging backtest
-Copyright (C) 2023 Andrea Varesio <https://www.andreavaresio.com/>
+Copyright (C) 2022-2023 Andrea Varesio <https://www.andreavaresio.com/>
 Source Code: <https://github.com/andrea-varesio/smart-dca-backtest>
 
 This program is free software: you can redistribute it and/or modify
@@ -34,7 +34,7 @@ import urllib.request
 import pandas
 import yfinance
 
-VERSION = 20230102.01
+VERSION = 20230103.01
 
 cwd = os.path.dirname(os.path.realpath(__file__))
 tiers = ['tier_n3', 'tier_n2', 'tier_n1', 'tier_00', 'tier_p1', 'tier_p2', 'tier_p3']
@@ -48,8 +48,7 @@ def parse_arguments():
     Parse arguments
     """
 
-    copy = 'Smart DCA backtest - Copyright (C) 2023 Andrea Varesio <https://www.andreavaresio.com/>'
-    arg = argparse.ArgumentParser(description=copy)
+    arg = argparse.ArgumentParser(description='Smart DCA backtest')
 
     asset = arg.add_mutually_exclusive_group()
     ranges = arg.add_mutually_exclusive_group()
@@ -97,7 +96,7 @@ def show_license():
 
     print('*' * 86)
     print('"Smart DCA backtest" - Smart Dollar Cost Averaging backtest')
-    print('Copyright (C) 2023 Andrea Varesio <https://www.andreavaresio.com/>.')
+    print('Copyright (C) 2022-2023 Andrea Varesio <https://www.andreavaresio.com/>.')
     print('Source Code: <https://github.com/andrea-varesio/smart-dca-backtest>')
     print('\nThis program comes with ABSOLUTELY NO WARRANTY')
     print('This is free software, and you are welcome to redistribute it under certain conditions')
